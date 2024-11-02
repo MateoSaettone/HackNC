@@ -6,11 +6,21 @@ from PIL import Image
 mtcnn = MTCNN(keep_all=True)
 resnet = InceptionResnetV1(pretrained='vggface2').eval()
 
-# Load the friend's embedding (this could be replaced with a database call if you store embeddings elsewhere)
-friend_embedding = torch.load("friend_embedding.pt")
+def load_friend_embedding(path="friend_embedding.pt"):
+    """Load the friend's embedding from a file."""
+    return torch.load(path)
+
+# Load the friend's embedding
+friend_embedding = load_friend_embedding()
+
+def detect_faces_in_image(image_path):
+    """Detect faces in an image and return face tensors."""
+    image = Image.open(image_path)
+    face_tensors, _ = mtcnn(image, return_prob=True)
+    return face_tensors
 
 async def process_photo(image):
-    face_tensors, _ = mtcnn(image, return_prob=True)
+    face_tensors = detect_faces_in_image(image)
     if face_tensors is None:
         return False
 
