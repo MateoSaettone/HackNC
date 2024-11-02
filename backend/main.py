@@ -1,4 +1,4 @@
-# Activate venv - mac source ./venv/bin/activate
+# Activate venv - mac: source ./venv/bin/activate
 # Activate fastAPI - uvicorn main:app --reload
 
 from fastapi import FastAPI
