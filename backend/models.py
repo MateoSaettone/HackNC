@@ -1,4 +1,7 @@
-from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel
 
-client = AsyncIOMotorClient("mongodb://localhost:27017")
-db = client["face_recognition_db"]
+class MatchedPhoto(BaseModel):
+    # Define your fields here
+    field1: str
+    field2: int
+
