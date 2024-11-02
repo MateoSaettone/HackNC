@@ -2,34 +2,29 @@ from facenet_pytorch import MTCNN, InceptionResnetV1
 import torch
 from PIL import Image
 
-# Initialize models
-mtcnn = MTCNN(keep_all=True)
+# Initialize the models
+mtcnn = MTCNN(keep_all=True)  # Set keep_all=True to detect multiple faces
 resnet = InceptionResnetV1(pretrained='vggface2').eval()
 
-def load_friend_embedding(path="friend_embedding.pt"):
-    """Load the friend's embedding from a file."""
-    return torch.load(path)
-
 # Load the friend's embedding
-friend_embedding = load_friend_embedding()
+friend_embedding = torch.load("/Users/mateosaettone/GitHub Repos/HackNC_2024/HackNC_0640/HackNC/backend/friend_embedding.pt")
 
-def detect_faces_in_image(image_path):
-    """Detect faces in an image and return face tensors."""
-    image = Image.open(image_path)
-    face_tensors, _ = mtcnn(image, return_prob=True)
-    return face_tensors
+# Function to process and get embeddings for multiple faces in an image
+def calculate_embedding(image_path):
+    img = Image.open(image_path)
+    faces = mtcnn(img)  # Detect multiple faces
 
-async def process_photo(image):
-    face_tensors = detect_faces_in_image(image)
-    if face_tensors is None:
-        return False
+    if faces is not None:
+        embeddings = []
+        with torch.no_grad():
+            for face in faces:
+                embedding = resnet(face.unsqueeze(0))  # Get embedding for each face
+                embeddings.append(embedding)
+        return embeddings  # Return list of embeddings for all detected faces
+    return None
 
-    for face in face_tensors:
-        face_embedding = resnet(face.unsqueeze(0))
-        if compare_embeddings(face_embedding, friend_embedding):
-            return True
-    return False
-
-def compare_embeddings(embedding1, embedding2, threshold=0.6):
+# Function to compare embeddings
+def is_match(embedding1, embedding2, threshold=0.6):
     distance = torch.dist(embedding1, embedding2).item()
+    print(f"Distance between embeddings: {distance}")
     return distance < threshold
