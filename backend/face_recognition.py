@@ -24,7 +24,7 @@ def calculate_embedding(image_path):
     return None
 
 # Function to compare embeddings
-def is_match(embedding1, embedding2, threshold=0.6):
+def is_match(embedding1, embedding2, threshold=0.7):
     distance = torch.dist(embedding1, embedding2).item()
     print(f"Distance between embeddings: {distance}")
     return distance < threshold
