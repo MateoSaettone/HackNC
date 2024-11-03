@@ -7,7 +7,7 @@ mtcnn = MTCNN(keep_all=True)  # Set keep_all=True to detect multiple faces
 resnet = InceptionResnetV1(pretrained='vggface2').eval()
 
 # Load the friend's embedding
-friend_embedding = torch.load("/Users/mateosaettone/GitHub Repos/HackNC_2024/HackNC_0640/HackNC/backend/friend_embedding.pt")
+friend_embedding = torch.load("friend_embedding.pt")
 
 # Function to process and get embeddings for multiple faces in an image
 def calculate_embedding(image_path):
